@@ -1,0 +1,14 @@
+# LM Studio Multi-Model Orchestrator
+# Python 3.8+
+ 
+# External Dependencies
+requests>=2.28.0
+ 
+# Built-in modules (no installation needed):
+# - tkinter (Python GUI - may need separate install on Linux)
+# - os (file/directory operations)
+# - threading (background tasks)
+# - datetime (timestamps)
+# - sys (system operations)
+# - subprocess (restart script)
+# - json (implicit via requests)
