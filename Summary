@@ -1,2 +1,12 @@
-# LMmultipass
-LM Studio Multi-Model Orchestrator  A lightweight local AI workflow tool for chaining multiple LLMs into configurable processing pipelines.  Status: Experimental
+LMmultipass
+
+LM Studio Multi-Model Orchestrator (LMSuite)
+
+A lightweight local AI workflow tool for chaining multiple LLMs into configurable processing pipelines. Everything runs on your own machine through LM Studio's local server — no cloud APIs.
+
+Status: Experimental · Current version: LMengine-v29 · Platform: built for Windows (Tkinter GUI)
+
+What it does
+
+LMSuite runs a multi-model roundtable. You give it a topic, pick two or more participants (each a different LM Studio model with its own role), and they take turns building on a shared transcript. When the discussion finishes, a Final Writer model turns the whole thing into a finished piece such as a story, a program, an article or a lesson.
+
