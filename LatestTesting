@@ -1,0 +1,19 @@
+## Problems in v29 worth knowing about
+
+1. **The default `NoContradictions` is close to a coin-flip on prose.** It flags any text containing both "not" and "must" as substrings ("false"/"true" is a second pair). I confirmed that `"You must not do that."` and `"...nothing left but mustard."` both fail. With auto-fix on, a collective failure returns `success: False`, so the caller discards the whitespace and capitalization fixes too. The log says "keeping turn unvalidated." On longer turns this will fire often.
+
+2. **Compaction can silently lose middle-of-discussion content.** `_compact_discussion_transcript` sends `full_text[:8000]`, which is the previous summary followed by all older turns, so the tail gets cut. The result replaces the summary wholesale. This is an estimate that depends on turn and summary length. With 700-character turns, roughly 6–8 older turns fit by round 20, and the rest never reach a summary. The Final Writer sees the raw transcript only up to 16,000 characters. The full transcript is still saved on disk.
+
+3. **Dead code and config from earlier iterations.**
+   - The Moderator role was removed from `DISCUSSION_ROLES`, but the synthesis code, `moderator_max_tokens` and a Token Tuner field remain.
+   - `max_tokens_var` and `temperature_var` are never read. Turns hardcode temperature 0.7 and compaction hardcodes 0.3 and 5000 tokens.
+   - `quick_start_enabled` is never read. "Settings (beta)" is only a message box.
+   - Many `CONFIG` keys appear exactly once, so they are never read.
+
+4. **Thread safety is only partly applied.** The auto-swap flag is mirrored to a plain bool for that reason, but workers still call `.get()` on other Tk variables such as `timeout_var`, the rule checkboxes and `writer_auto_var`. The auto-write path also never sets `_writer_running`, so pressing Write Final Piece during an auto-pause could start two writers.
+
+5. **A connection error kills the whole run.** A non-200 response skips the turn, but a `RequestException` exits the loop and skips the Final Writer.
+
+6. **Optional constraints are blunt.** `NoMarkdown` strips `_` and `!`, so `snake_case` becomes `snakecase`. `IsEnglish.fix` drops all non-ASCII, so "Café" becomes "Caf". Neither is in the default engine.
+
+If you want, I can patch the first two, replacing `NoContradictions` with something less trigger-happy and making compaction summarize only the turns that are new since the last summary.
